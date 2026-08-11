@@ -8,7 +8,7 @@ spec:
   goTemplateOptions: ["missingkey=error"]
   generators:
     - git:
-        repoURL: git@github.com:jswamina-redhat/logging-apps.git
+        repoURL: https://github.com/jswamina-redhat/logging-apps-test.git
         revision: main
         directories:
           - path: workloads-logging/*
@@ -21,7 +21,7 @@ spec:
     spec:
       project: default
       source:
-        repoURL: git@github.com:jswamina-redhat/logging-apps.git
+        repoURL: https://github.com/jswamina-redhat/logging-apps-test.git
         targetRevision: main
         path: "{{ .path.path }}"
       destination:
