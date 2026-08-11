@@ -1,0 +1,24 @@
+apiVersion: observability.openshift.io/v1
+kind: ClusterLogForwarder
+metadata:
+  name: log-to-loki
+  namespace: openshift-logging
+spec:
+  serviceAccount:
+    name: tt-log-forwarder   # PRE-REQ: create service account and assign cluster role (collect-audit-logs|collect-application-logs|collect-infrastructure-logs)
+  ouputs:
+    - name: external-loki
+      type: loki
+      loki:
+        url: 'https://logs-prod-006.grafana.net/loki/api/v1/push'
+        authentication:
+          secret:
+            name: tt-loki-auth    # PRE-REQ: Create secret with required credentials / Figure out how to implement w/ External Secrets Operator
+  pipelines:
+    - name: send-logs
+      inputRefs:
+        - application
+        - infrastructure
+        - audit
+      outputRefs:
+        - external-loki
