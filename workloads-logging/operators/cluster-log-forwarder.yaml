@@ -5,17 +5,27 @@ metadata:
   namespace: openshift-logging
 spec:
   serviceAccount:
-    name: tt-log-forwarder   # PRE-REQ: create service account and assign cluster role (collect-audit-logs|collect-application-logs|collect-infrastructure-logs)
-  ouputs:
+    name: tt-log-forwarder
+  outputs:
     - name: external-loki
       type: loki
       loki:
-        url: 'https://logs-prod-006.grafana.net/loki/api/v1/push'
+        url: 'https://logs-prod-021.grafana.net' # TT LOKI: 'https://logs-prod-006.grafana.net' # base URL; collector appends /loki/api/v1/push
+        # secret:
+        #   name: tt-loki-auth # Created / rotated by ESO
+        labelKeys:
+          - log_type
+          - kubernetes.namespace_name
+          - openshift.cluster_id
         authentication:
-          secret:
-            name: tt-loki-auth    # PRE-REQ: Create secret with required credentials / Figure out how to implement w/ External Secrets Operator
+          username:
+            secretName: tt-loki-auth
+            key: username
+          password:
+            secretName: tt-loki-auth
+            key: password
   pipelines:
-    - name: send-logs
+    - name: all-to-loki
       inputRefs:
         - application
         - infrastructure
